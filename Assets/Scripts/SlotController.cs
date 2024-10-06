@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
@@ -8,14 +9,19 @@ public class Controller : MonoBehaviour
 {
     public GameObject prefabReel;
     public int numReel;
+    public Button myButton;
+    private static Button staticButton;
+    private float delay;
+    private int reelStopCount;
     public Canvas targetCanvas;
-    public ReelMovement ReelMovement;
-    private RectTransform[] symbols;
     private List<ReelMovement> reelMovements = new List<ReelMovement>();
     private int xpReel = -500;
+    public event Action OnReelStop;
+
     // Start is called before the first frame update
     void Start()
     {
+        staticButton = myButton;
         for (int i = 0; i < numReel; i++)
         {
             GameObject newPrefab = Instantiate(prefabReel, targetCanvas.transform);
@@ -27,16 +33,35 @@ public class Controller : MonoBehaviour
             {
                 reelMovements.Add(reelMovement);
             }
+            reelMovement.OnReelStop += ReelStopped;
         }
     }
 
-    // Update is called once per frame
+    // Llamamos al reelmovement añadiendole más tiempo para que haya delay en el final de cada reel. Tambien desactivamos y activamos el botón
     public void ButtonStartReel()
     {
+        myButton.interactable = false;
+        delay= 8;
         foreach (ReelMovement reelMovement in reelMovements)
         {
-            reelMovement.ReelStartMove(); 
+            reelMovement.ReelStartMove(delay);
+            delay += 2; 
         }
-       
+    }
+
+    public void ReelStopped()
+    {
+        reelStopCount++;
+        if (reelStopCount >= 3)
+        {
+            StartCoroutine(ActivateButtonWithDelay(0.5f));
+            reelStopCount = 0;
+        }
+
+    }
+     private IEnumerator ActivateButtonWithDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        staticButton.interactable = true; // Activa el botón
     }
 }

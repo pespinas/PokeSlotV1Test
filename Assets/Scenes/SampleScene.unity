@@ -466,8 +466,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabReel: {fileID: 3433253427831430198, guid: 418c79c3cf350b8488bfaf39b2795cf9, type: 3}
   numReel: 3
+  myButton: {fileID: 783498011}
   targetCanvas: {fileID: 1559557749}
-  ReelMovement: {fileID: 0}
 --- !u!4 &1422188398
 Transform:
   m_ObjectHideFlags: 0
