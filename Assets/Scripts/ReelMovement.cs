@@ -1,5 +1,6 @@
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 using System;
 
@@ -14,8 +15,9 @@ public class ReelMovement : MonoBehaviour
     int countSimbol;
     public event Action OnReelStop;
     private SpriteRenderer spriteRenderer;
-    private Tween myTween;
     private RectTransform[] symbols;
+    private string pathSymbol = "Sprites/";
+    private string[] imgSymols= {"S01","S02","S03","S04","S05","S06","SRe"};
     void Start()
     {
         symbols = new RectTransform[transform.childCount];
@@ -46,9 +48,10 @@ public class ReelMovement : MonoBehaviour
             //Mueve el simbolo a la parte superior para el bucle
            if (symbol.anchoredPosition.y >= bottomPosition)
             {
-               Color randomColor = Random.ColorHSV();
-                spriteRenderer = symbol.GetComponent<SpriteRenderer>(); // Asegúrate de obtener el SpriteRenderer
-                spriteRenderer.color = randomColor;
+                int randNumber = Random.Range(0, 7);
+                spriteRenderer = symbol.GetComponent<SpriteRenderer>();
+                Sprite newSprite = Resources.Load<Sprite>(pathSymbol + imgSymols[randNumber]);
+                spriteRenderer.sprite = newSprite;
                 symbol.anchoredPosition = new Vector2(symbol.anchoredPosition.x, topPosition);
             }
             //Despues de x tiempo paramos el tween y añadimos una animación para la parada de reels. Se paran primero los 2 simbolos de arriba que no se ven
