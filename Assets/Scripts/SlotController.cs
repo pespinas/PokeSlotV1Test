@@ -41,7 +41,7 @@ public class Controller : MonoBehaviour
     public void ButtonStartReel()
     {
         myButton.interactable = false;
-        delay= 8;
+        delay= 7;
         foreach (ReelMovement reelMovement in reelMovements)
         {
             reelMovement.ReelStartMove(delay);

@@ -3,6 +3,7 @@ using DG.Tweening;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 using System;
+using System.Collections.Generic;
 
 public class ReelMovement : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class ReelMovement : MonoBehaviour
     public event Action OnReelStop;
     private SpriteRenderer spriteRenderer;
     private RectTransform[] symbols;
+    private List<string> reelsSimbols = new List<string>();
+    private int randNumber;
     private string pathSymbol = "Sprites/";
     private string[] imgSymols= {"S01","S02","S03","S04","S05","S06","SRe"};
     void Start()
@@ -48,7 +51,7 @@ public class ReelMovement : MonoBehaviour
             //Mueve el simbolo a la parte superior para el bucle
            if (symbol.anchoredPosition.y >= bottomPosition)
             {
-                int randNumber = Random.Range(0, 7);
+                randNumber = SimbolsController.RandSimbol();
                 spriteRenderer = symbol.GetComponent<SpriteRenderer>();
                 Sprite newSprite = Resources.Load<Sprite>(pathSymbol + imgSymols[randNumber]);
                 spriteRenderer.sprite = newSprite;
@@ -59,10 +62,17 @@ public class ReelMovement : MonoBehaviour
             {
                 symbol.DOKill();
                 symbol.DOAnchorPosY(positionFinal[countSimbol], 0.3f).SetEase(Ease.OutBack);
+                if (countSimbol> 1)
+                {
+                    SpriteRenderer spriteRenderer = symbol.GetComponent<SpriteRenderer>();
+                    reelsSimbols.Add(spriteRenderer.sprite.name);
+                }
                 countSimbol++;
                 if (countSimbol == 5)
                 {
+                    
                     StopReel();
+
                 }
             }
             else
