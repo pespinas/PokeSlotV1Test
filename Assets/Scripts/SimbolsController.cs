@@ -46,138 +46,96 @@ public class SimbolsController : MonoBehaviour
         }
         if (columnN == 3)
         {
-            ChechSimbol(reelsSymbols);
+            CheckSymbol(reelsSymbols);
         }
     }
 
-    private void ChechSimbol(string[,] reelsSymbols)
+    private void CheckSymbol(string[,] reelsSymbols)
     {
-        if (reelsSymbols[0,0] == reelsSymbols[1,0])
-        {
-            if (reelsSymbols[1,0] == reelsSymbols[2,0] && reelsSymbols[2,0] != "SO3" )
-            {
-                symbol = reelsSymbols[0,0];
-            }
-            else if ((reelsSymbols[0,0] == "S01" && reelsSymbols[2,0] == "S02") || (reelsSymbols[0,0] == "S02" && reelsSymbols[2,0] == "S01") )
-            {
-                symbol = "Mix7";
-            }
-            else if (reelsSymbols[1,0] == "S03")
-            {
-                symbol = "S03Double";
-            } 
-        }
+        float valueCoin = 0;
+        // Verificar líneas verticales y diagonales
+        valueCoin += CheckLine(reelsSymbols[0, 0], reelsSymbols[1, 0], reelsSymbols[2, 0]);  
+        valueCoin += CheckLine(reelsSymbols[0, 2], reelsSymbols[1, 2], reelsSymbols[2, 2]);  
+        valueCoin += CheckLine(reelsSymbols[0, 0], reelsSymbols[1, 1], reelsSymbols[2, 2]);  
+        valueCoin += CheckLine(reelsSymbols[0, 2], reelsSymbols[1, 1], reelsSymbols[2, 0]);
 
-        if (reelsSymbols[0, 2] == reelsSymbols[1, 2])
-        {
-            if (reelsSymbols[1, 2] == reelsSymbols[2, 2] && reelsSymbols[2, 2] != "S03")
-            {
-                symbol = reelsSymbols[0, 2];
-            }
-            else if ((reelsSymbols[0, 2] == "S01" && reelsSymbols[2, 2] == "S02") || 
-                    (reelsSymbols[0, 2] == "S02" && reelsSymbols[2, 2] == "S01"))
-            {
-                symbol = "Mix7";
-            }
-            else if (reelsSymbols[1, 2] == "S03")
-            {
-                symbol = "S03Double";
-            }
-        }
+        // Verificar si S03 aparece en alguna de las posiciones clave
+        valueCoin += CheckS03Symbol(reelsSymbols[0, 0]);
+        valueCoin += CheckS03Symbol(reelsSymbols[0, 1]);
+        valueCoin += CheckS03Symbol(reelsSymbols[0, 2]);
 
-        if (reelsSymbols[0, 0] == reelsSymbols[1, 1])
-        {
-            if (reelsSymbols[1, 1] == reelsSymbols[2, 2] && reelsSymbols[2, 2] != "S03")
-            {
-                symbol = reelsSymbols[0, 0];
-            }
-            else if ((reelsSymbols[0, 0] == "S01" && reelsSymbols[2, 2] == "S02") || 
-                    (reelsSymbols[0, 0] == "S02" && reelsSymbols[2, 2] == "S01"))
-            {
-                symbol = "Mix7";
-            }
-            else if (reelsSymbols[1, 1] == "S03")
-            {
-                symbol = "S03Double";
-            }
-        }
+        // Añadir una funcion que use valueCoin para mostrarlo en pantalla, en otro archivo
 
-        if (reelsSymbols[0, 2] == reelsSymbols[1, 1])
+    } 
+
+    private float CheckLine(string symbol1, string symbol2, string symbol3)
+    {   
+        if (symbol1 == symbol2)
         {
-            if (reelsSymbols[1, 1] == reelsSymbols[2, 0] && reelsSymbols[2, 0] != "S03")
+            if (symbol2 == symbol3 && symbol3 != "S03")
             {
-                symbol = reelsSymbols[0, 2];
+                symbol = symbol1;
+                return CheckPrizes(symbol);
             }
-            else if ((reelsSymbols[0, 2] == "S01" && reelsSymbols[2, 0] == "S02") || 
-                    (reelsSymbols[0, 2] == "S02" && reelsSymbols[2, 0] == "S01"))
+            else if (IsMix7(symbol1, symbol3))
             {
-                symbol = "Mix7";
+                return CheckPrizes("Mix7");
             }
-            else if (reelsSymbols[1, 1] == "S03")
+            else if (symbol2 == "S03")
             {
-                symbol = "S03Double";
+                return CheckPrizes("S03Double");
             }
         }
-        //S03 check
-        if (reelsSymbols[0, 0] == "S03")
-        {
-            symbol = "S03";
-        }
-        if (reelsSymbols[0, 1] == "S03")
-        {
-            symbol = "S03";
-        }
-        if (reelsSymbols[0, 2] == "S03")
-        {
-            symbol = "S03";
-        }
-                
+        return 0;
+    }   
+
+    private bool IsMix7(string symbol1, string symbol3)
+    {
+        return (symbol1 == "S01" && symbol3 == "S02") || (symbol1 == "S02" && symbol3 == "S01");
     }
 
-    private void CheckPrizes(String symbol)
+    private float CheckS03Symbol(string symbol)
+    {
+        if (symbol == "S03")
+        {
+            return CheckPrizes("S03");
+        }
+        return 0;
+    }
+    private float CheckPrizes(String symbol)
     {
         switch (symbol)
         {
             case "S01":
-                // Al obtener el símbolo "S01", se otorgan 300 puntos.
-                break;
-
+                return 300;
             case "S02":
-                // Al obtener el símbolo "S02", se otorgan 200 puntos.
-                break;
+                return 200;
 
             case "Mix7":
-                // Al obtener una combinación de "S01" y "S02", se otorgan 90 puntos.
-                break;
+                return 90;
 
             case "S03":
-                // Al obtener el símbolo "S03", se otorgan 2 puntos.
-                break;
+                return 2;
 
             case "S03Double":
-                // Al obtener el símbolo "S03" en una combinación doble, se otorgan 4 puntos.
-                break;
+                return 4;
 
             case "S04":
-                // Al obtener el símbolo "S04", se otorgan 3 puntos.
-                break; // Comentario sobre "3 coin porwe" no está claro; se puede aclarar más.
+                return 3; // "3 coin power" no está claro; se puede aclarar más.
 
             case "S05":
-                // Al obtener el símbolo "S05", se otorgan 6 puntos.
-                break;
+                return 6;
 
             case "S06":
-                // Al obtener el símbolo "S06", se otorgan 12 puntos.
-                break;
+                return 12;
 
             case "SRe":
                 // Al obtener el símbolo "SRe", se activa una función de repetición (Replay).
-                break;
+                return 0.1f;
 
             default:
-                // Si el símbolo no coincide con ninguno de los casos anteriores, se muestra un mensaje de error.
                 Debug.Log("Símbolo desconocido");
-                break;
+                return 0;
         }
     }
 }
