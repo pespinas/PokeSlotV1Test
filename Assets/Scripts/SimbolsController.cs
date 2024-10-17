@@ -138,4 +138,6 @@ public class SimbolsController : MonoBehaviour
                 return 0;
         }
     }
+
+    
 }

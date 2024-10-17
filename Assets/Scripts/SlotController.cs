@@ -15,7 +15,7 @@ public class Controller : MonoBehaviour
     private int reelStopCount;
     public Canvas targetCanvas;
     private List<ReelMovement> reelMovements = new List<ReelMovement>();
-    private int xpReel = -500;
+    private int xpReel = -323;
     public event Action OnReelStop;
 
     // Start is called before the first frame update
@@ -26,8 +26,8 @@ public class Controller : MonoBehaviour
         {
             GameObject newPrefab = Instantiate(prefabReel, targetCanvas.transform);
             Transform prefabPosition = newPrefab.GetComponent<Transform>();
-            prefabPosition.localPosition = new Vector2(xpReel, 0);
-            xpReel += 300;
+            prefabPosition.localPosition = new Vector2(xpReel, 15);
+            xpReel += 180;
             ReelMovement reelMovement = newPrefab.GetComponent<ReelMovement>();
             if (reelMovement != null)
             {
