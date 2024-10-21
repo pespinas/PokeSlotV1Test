@@ -15,8 +15,9 @@ public class Controller : MonoBehaviour
     private int reelStopCount;
     public Canvas targetCanvas;
     private List<ReelMovement> reelMovements = new List<ReelMovement>();
-    private int xpReel = -323;
+    private int xpReel = -329;
     public event Action OnReelStop;
+    private UIController ui;
 
     // Start is called before the first frame update
     void Start()
@@ -27,7 +28,7 @@ public class Controller : MonoBehaviour
             GameObject newPrefab = Instantiate(prefabReel, targetCanvas.transform);
             Transform prefabPosition = newPrefab.GetComponent<Transform>();
             prefabPosition.localPosition = new Vector2(xpReel, 15);
-            xpReel += 180;
+            xpReel += 182;
             ReelMovement reelMovement = newPrefab.GetComponent<ReelMovement>();
             if (reelMovement != null)
             {
@@ -35,6 +36,8 @@ public class Controller : MonoBehaviour
             }
             reelMovement.OnReelStop += ReelStopped;
         }
+        GameObject obj = GameObject.Find("Controller");
+        ui = obj.GetComponent<UIController>();
     }
 
     // Llamamos al reelmovement añadiendole más tiempo para que haya delay en el final de cada reel. Tambien desactivamos y activamos el botón
@@ -47,6 +50,7 @@ public class Controller : MonoBehaviour
             reelMovement.ReelStartMove(delay);
             delay += 2; 
         }
+        ui.PayoutWon(0);
     }
 
     public void ReelStopped()

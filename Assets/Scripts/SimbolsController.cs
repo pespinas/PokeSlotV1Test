@@ -2,22 +2,24 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using TMPro.EditorUtilities;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 public class SimbolsController : MonoBehaviour
 {
-    static float[] probabilities = {1f, 2f, 20f, 10f, 10f, 5f, 30f};
+    static float[] probabilities = {1f, 2f, 40f, 10f, 10f, 5f, 30f};
     private string[,] reelsSymbols = new string[3, 3];
     private int columnN =0;
     // 7,7,pokeballs,pikachu,lotad,marill,replay
     private String symbol;
-
+    private UIController ui;
     static int selectedSymbolIndex;
     void Start()
     {
-        
+        GameObject obj = GameObject.Find("Controller");
+        ui = obj.GetComponent<UIController>();
     }
 
     // Update is called once per frame
@@ -39,14 +41,16 @@ public class SimbolsController : MonoBehaviour
 
     public void SavePosition(List<string> symbols)
     {
-        columnN += 1;
         for (int row = 0; row < 3; row++)
         {
-            reelsSymbols[columnN, row] = symbols.ToString();
+            reelsSymbols[columnN, row] = symbols[row];
         }
+        columnN += 1;
         if (columnN == 3)
         {
             CheckSymbol(reelsSymbols);
+            reelsSymbols = new string[3, 3];
+            columnN = 0;
         }
     }
 
@@ -58,14 +62,15 @@ public class SimbolsController : MonoBehaviour
         valueCoin += CheckLine(reelsSymbols[0, 2], reelsSymbols[1, 2], reelsSymbols[2, 2]);  
         valueCoin += CheckLine(reelsSymbols[0, 0], reelsSymbols[1, 1], reelsSymbols[2, 2]);  
         valueCoin += CheckLine(reelsSymbols[0, 2], reelsSymbols[1, 1], reelsSymbols[2, 0]);
+        valueCoin += CheckLine(reelsSymbols[0, 1], reelsSymbols[1, 1], reelsSymbols[2, 1]);
 
-        // Verificar si S03 aparece en alguna de las posiciones clave
-        valueCoin += CheckS03Symbol(reelsSymbols[0, 0]);
-        valueCoin += CheckS03Symbol(reelsSymbols[0, 1]);
-        valueCoin += CheckS03Symbol(reelsSymbols[0, 2]);
+        valueCoin += CheckS03Symbol(reelsSymbols[0, 0], reelsSymbols[1, 0]);
+        valueCoin += CheckS03Symbol(reelsSymbols[0, 1], reelsSymbols[1, 1]);
+        valueCoin += CheckS03Symbol(reelsSymbols[0, 2], reelsSymbols[1, 2]);
 
+        int money = (int)valueCoin;
         // Añadir una funcion que use valueCoin para mostrarlo en pantalla, en otro archivo
-
+        ui.PayoutCheck(money);
     } 
 
     private float CheckLine(string symbol1, string symbol2, string symbol3)
@@ -81,7 +86,7 @@ public class SimbolsController : MonoBehaviour
             {
                 return CheckPrizes("Mix7");
             }
-            else if (symbol2 == "S03")
+            else if (symbol1 == "S03" && symbol2 == "S03")
             {
                 return CheckPrizes("S03Double");
             }
@@ -94,9 +99,9 @@ public class SimbolsController : MonoBehaviour
         return (symbol1 == "S01" && symbol3 == "S02") || (symbol1 == "S02" && symbol3 == "S01");
     }
 
-    private float CheckS03Symbol(string symbol)
+    private float CheckS03Symbol(string symbol, string symbol2)
     {
-        if (symbol == "S03")
+        if (symbol == "S03" && symbol2 != "S03")
         {
             return CheckPrizes("S03");
         }
