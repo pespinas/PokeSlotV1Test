@@ -18,6 +18,7 @@ public class Controller : MonoBehaviour
     private int xpReel = -329;
     public event Action OnReelStop;
     private UIController ui;
+    private AnimationController anim;
 
     // Start is called before the first frame update
     void Start()
@@ -38,19 +39,22 @@ public class Controller : MonoBehaviour
         }
         GameObject obj = GameObject.Find("Controller");
         ui = obj.GetComponent<UIController>();
+        anim = GetComponent<AnimationController>();
     }
 
     // Llamamos al reelmovement añadiendole más tiempo para que haya delay en el final de cada reel. Tambien desactivamos y activamos el botón
     public void ButtonStartReel()
     {
         myButton.interactable = false;
-        delay= 7;
+        delay= 2;
         foreach (ReelMovement reelMovement in reelMovements)
         {
             reelMovement.ReelStartMove(delay);
             delay += 2; 
         }
         ui.PayoutWon(0);
+        ui.BetUpdate(-6);
+        anim.StartAnimPrincipal();
     }
 
     public void ReelStopped()

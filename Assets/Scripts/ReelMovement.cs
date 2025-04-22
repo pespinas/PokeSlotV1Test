@@ -19,6 +19,7 @@ public class ReelMovement : MonoBehaviour
     private RectTransform[] symbols;
     private List<string> reelsSimbols = new List<string>();
     private int randNumber;
+    float startTime;
     private SimbolsController SimbolController;
     private string pathSymbol = "Sprites/";
     private string[] imgSymols= {"S01","S02","S03","S04","S05","S06","SRe"};
@@ -34,7 +35,8 @@ public class ReelMovement : MonoBehaviour
     }
     //Funcion que es llamada desde SlotController para comenzar el movimiento
     public void ReelStartMove(float time ){
-        elapsedTime = 0;
+        //elapsedTime = 0;
+        startTime = Time.time;
         countSimbol = 0;
         foreach (RectTransform symbol in symbols)
         {
@@ -44,7 +46,7 @@ public class ReelMovement : MonoBehaviour
    public void MoveSymbols(RectTransform symbol, float delayEnd)
     {   
 
-        elapsedTime += Time.deltaTime * 100 ;
+        //elapsedTime += Time.deltaTime * 100 ;
         Vector2 endPos = new Vector2(symbol.anchoredPosition.x, bottomPosition);
         distance = symbol.anchoredPosition.y - bottomPosition ;
         dynamicDuration = distance / 3000f;
@@ -60,7 +62,7 @@ public class ReelMovement : MonoBehaviour
                 symbol.anchoredPosition = new Vector2(symbol.anchoredPosition.x, topPosition);
             }
             //Despues de x tiempo paramos el tween y añadimos una animación para la parada de reels. Se paran primero los 2 simbolos de arriba que no se ven
-            if (elapsedTime >= delayEnd)
+            if (Time.time - startTime >= delayEnd)
             {
                 
                 symbol.DOKill();

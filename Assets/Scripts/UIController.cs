@@ -8,8 +8,10 @@ public class UIController : MonoBehaviour
 {
     public GameObject panelCredit;    
     public GameObject panelPayout;
-    private GameObject[] PCredit;
-    private GameObject[] PPayout;
+    public GameObject panelLabel;
+    private GameObject[] pCredit;
+    private GameObject[] pPayout;
+    private GameObject[] labelResult;
     private SpriteRenderer spriteRenderer;
     public int Dineros;
     private string pathNumbers = "Sprites/";
@@ -19,16 +21,16 @@ public class UIController : MonoBehaviour
     void Start()
     {
         int childCountCredit = panelCredit.transform.childCount;
-        PCredit = new GameObject[childCountCredit];
+        pCredit = new GameObject[childCountCredit];
         for (int i = 0; i < childCountCredit; i++)
         {
-            PCredit[i] = panelCredit.transform.GetChild(i).gameObject;
+            pCredit[i] = panelCredit.transform.GetChild(i).gameObject;
         }
         int childCountPayout = panelPayout.transform.childCount;
-        PPayout = new GameObject[childCountPayout];
+        pPayout = new GameObject[childCountPayout];
         for (int i = 0; i < childCountPayout; i++)
         {
-            PPayout[i] = panelPayout.transform.GetChild(i).gameObject;
+            pPayout[i] = panelPayout.transform.GetChild(i).gameObject;
         }
         CreditStart(Dineros);
     }
@@ -44,7 +46,7 @@ public class UIController : MonoBehaviour
             {
                 longCredit--;
                 int separatedDigit = int.Parse(digit.ToString());
-                spriteRenderer = PCredit[longCredit].GetComponent<SpriteRenderer>();
+                spriteRenderer = pCredit[longCredit].GetComponent<SpriteRenderer>();
                 Sprite newSprite = Resources.Load<Sprite>(pathNumbers + imgNumbers[separatedDigit]);
                 spriteRenderer.sprite = newSprite;
             }
@@ -55,13 +57,13 @@ public class UIController : MonoBehaviour
     {
         int startValue = 0;
         startValue = int.Parse(CurrentCredit());
-        int newDineros = Win + startValue;
+        int newDineros = startValue + Win;
         PayoutWon(Win);
-         DOTween.To(() => startValue, x => 
+        DOTween.To(() => startValue, x => 
         {
             startValue = x;
             UpdateNumberDisplay(startValue);
-        }, newDineros, 2f).OnComplete(() => 
+        }, newDineros, 1f).OnComplete(() => 
         {
             CreditStart(newDineros); 
         }).SetEase(Ease.Linear);
@@ -71,13 +73,14 @@ public class UIController : MonoBehaviour
     {
         string numberAsString = win.ToString();
         int longCredit = numberAsString.Length;
+        
         if (win != 0)
         {
             foreach (char digit in numberAsString)
             {
                 longCredit--;
                 int separatedDigit = int.Parse(digit.ToString());
-                spriteRenderer = PPayout[longCredit].GetComponent<SpriteRenderer>();
+                spriteRenderer = pPayout[longCredit].GetComponent<SpriteRenderer>();
                 Sprite newSprite = Resources.Load<Sprite>(pathNumbers + imgNumbers[separatedDigit]);
                 spriteRenderer.sprite = newSprite;
             }
@@ -87,19 +90,29 @@ public class UIController : MonoBehaviour
             for (int i = 0; i < 4; i++)
             {
                 int separatedDigit = 0;
-                spriteRenderer = PPayout[i].GetComponent<SpriteRenderer>();
+                spriteRenderer = pPayout[i].GetComponent<SpriteRenderer>();
                 Sprite newSprite = Resources.Load<Sprite>(pathNumbers + imgNumbers[separatedDigit]);
                 spriteRenderer.sprite = newSprite;
             }
         }
         
     }
+    public void BetUpdate(int negativeValue)
+    {
+        int currentCredit = int.Parse(CurrentCredit());
+        int newCredit = currentCredit + negativeValue;
+    
+        // Actualiza la visualización de los sprites.
+        UpdateNumberDisplay(newCredit);
+        CreditStart(newCredit);
+    }
+    
     string CurrentCredit()
     {
         String totalCredit= "";
-        for (int i = PCredit.Length - 1; i >= 0; i--)
+        for (int i = pCredit.Length - 1; i >= 0; i--)
         {
-            SpriteRenderer sr = PCredit[i].GetComponent<SpriteRenderer>();
+            SpriteRenderer sr = pCredit[i].GetComponent<SpriteRenderer>();
             string spriteName = sr.sprite.name;
             string numberString = spriteName.Replace("N", "");
             totalCredit += numberString;
@@ -115,10 +128,17 @@ public class UIController : MonoBehaviour
         {
             longCredit--;
             int separatedDigit = int.Parse(digit.ToString());
-            spriteRenderer = PCredit[longCredit].GetComponent<SpriteRenderer>();
+            spriteRenderer = pCredit[longCredit].GetComponent<SpriteRenderer>();
             Sprite newSprite = Resources.Load<Sprite>(pathNumbers + imgNumbers[separatedDigit]);
             spriteRenderer.sprite = newSprite;
         }
+    }
+
+    public void LabelResult(string Result)
+    {
+        spriteRenderer = panelLabel.GetComponentInChildren<SpriteRenderer>();
+        Sprite newSprite = Resources.Load<Sprite>(pathNumbers + Result);
+        spriteRenderer.sprite = newSprite;
     }
 }
 
