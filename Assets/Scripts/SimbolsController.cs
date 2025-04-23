@@ -159,7 +159,7 @@ public class SimbolsController : MonoBehaviour
                 return 12;
 
             case "SRe":
-                // Al obtener el símbolo "SRe", se activa una función de repetición (Replay).
+                // Al obtener el símbolo "SRe", se activa una función de repetición (Replay) No está implementada.
                 return 0.1f;
 
             default:

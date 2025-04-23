@@ -56,7 +56,7 @@ public class Controller : MonoBehaviour
         ui.BetUpdate(-6);
         anim.StartAnimPrincipal();
     }
-
+    // Recibimos que un reel se ha parado
     public void ReelStopped()
     {
         reelStopCount++;
